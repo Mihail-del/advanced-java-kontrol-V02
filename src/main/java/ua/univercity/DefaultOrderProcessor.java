@@ -12,8 +12,9 @@ public class DefaultOrderProcessor extends OrderProcessorTemplate {
     protected void reserveStock(Order order) {
         try {
             inventoryService.reserve(order.getItems());
-        }
-        catch (Exception e) {
+        } catch (AppException e) {
+            throw e;
+        } catch (Exception e) {
             throw new AppException("Reserve fail", e);
         }
     }
