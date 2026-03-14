@@ -6,8 +6,8 @@ public final class Money {
     private final long amount;
 
     public Money(long amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Negative amount");
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
         }
         this.amount = amount;
     }
