@@ -64,9 +64,10 @@ class OrderProcessorTest {
     // Neg out of stock
     @Test
     void testOutOfStock() {
-        processor = new DefaultOrderProcessor(i -> { throw new AppException("Out"); });
+        processor = new DefaultOrderProcessor(i -> { throw new OutOfStockException("Out of stock"); });
         Order order = new Order("6", new OrderItem[]{new OrderItem("P1", new Money(10L))});
-        assertThrows(AppException.class, () -> processor.process(order, cardPay));
+
+        assertThrows(OutOfStockException.class, () -> processor.process(order, cardPay));
     }
 
     // Neg card limit
