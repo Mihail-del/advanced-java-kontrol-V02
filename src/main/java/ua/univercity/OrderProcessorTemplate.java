@@ -4,18 +4,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class OrderProcessorTemplate {
+    private static final Logger log = Logger.getLogger(OrderProcessorTemplate.class.getName());
 
     // Main process
     public final void process(Order order, PaymentMethod paymentMethod) {
         try {
+            log.info("Start order: " + order.getId());
             validate(order);
             reserveStock(order);
             Money total = calculateTotal(order);
             processPayment(order, total, paymentMethod);
             completeOrder(order);
+            log.info("Done order: " + order.getId());
         } catch (AppException e) {
+            log.warning("Business fail: " + e.getMessage());
             throw e;
         } catch (Exception e) {
+            log.log(Level.SEVERE, "System fail", e);
             throw new RuntimeException("Error", e);
         }
     }
