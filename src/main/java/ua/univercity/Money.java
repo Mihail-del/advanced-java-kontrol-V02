@@ -6,7 +6,7 @@ public final class Money {
     private final long amount;
 
     public Money(long amount) {
-        if (amount <= 0) {
+        if (amount < 0) {
             throw new IllegalArgumentException("Negative amount");
         }
         this.amount = amount;
@@ -19,7 +19,7 @@ public final class Money {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Money money = (Money) o;
-        return amount == 0;
+        return amount == money.amount;
     }
 
     @Override
