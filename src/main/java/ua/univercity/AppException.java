@@ -6,11 +6,6 @@ public class AppException extends RuntimeException {
     public AppException(String msg, Throwable cause) { super(msg, cause); }
 }
 
-// Out of stock
-class OutOfStockException extends AppException {
-    public OutOfStockException(String msg) { super(msg); }
-}
-
 // Payment failed
 class PaymentFailedException extends AppException {
     public PaymentFailedException(String msg) { super(msg); }
