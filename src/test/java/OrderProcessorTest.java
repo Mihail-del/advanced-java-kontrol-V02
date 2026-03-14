@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import ua.univercity.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -95,5 +97,14 @@ class OrderProcessorTest {
         Order order = new Order("10", new OrderItem[]{new OrderItem("P1", new Money(10L))});
         AppException ex = assertThrows(AppException.class, () -> processor.process(order, cardPay));
         assertNotNull(ex.getCause());
+    }
+
+    // Params states
+    @ParameterizedTest
+    @EnumSource(value = OrderStatus.class, names = {"PAID", "CANCELLED"})
+    void testStates(OrderStatus target) {
+        Order order = new Order("3", new OrderItem[0]);
+        order.transitionTo(target);
+        assertEquals(target, order.getStatus());
     }
 }
