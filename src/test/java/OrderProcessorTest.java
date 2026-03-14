@@ -15,5 +15,13 @@ class OrderProcessorTest {
         processor = new DefaultOrderProcessor(mockInventory);
     }
 
+    // Mock card
+    PaymentMethod cardPay = amount -> {
+        if (amount.getAmount() > 25000L) throw new AppException("Fail");
+    };
 
+    // Mock paypal
+    PaymentMethod payPal = amount -> {
+        if (amount.getAmount() < 200L) throw new AppException("Fail");
+    };
 }
