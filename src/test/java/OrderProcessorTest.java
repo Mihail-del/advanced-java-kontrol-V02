@@ -49,4 +49,51 @@ class OrderProcessorTest {
         Order order = new Order("4", new OrderItem[]{new OrderItem("P1", new Money(300L))});
         assertDoesNotThrow(() -> processor.process(order, payPal));
     }
+
+    // Neg max items
+    @Test
+    void testMaxItems() {
+        OrderItem[] items = new OrderItem[11];
+        for (int i=0; i<11; i++) items[i] = new OrderItem("P", new Money(1L));
+        Order order = new Order("5", items);
+        assertThrows(AppException.class, () -> processor.process(order, cardPay));
+    }
+
+    // Neg out of stock
+    @Test
+    void testOutOfStock() {
+        processor = new DefaultOrderProcessor(i -> { throw new AppException("Out"); });
+        Order order = new Order("6", new OrderItem[]{new OrderItem("P1", new Money(10L))});
+        assertThrows(AppException.class, () -> processor.process(order, cardPay));
+    }
+
+    // Neg card limit
+    @Test
+    void testCardLimit() {
+        Order order = new Order("7", new OrderItem[]{new OrderItem("P1", new Money(30000L))});
+        assertThrows(AppException.class, () -> processor.process(order, cardPay));
+    }
+
+    // Neg paypal min
+    @Test
+    void testPayPalMin() {
+        Order order = new Order("8", new OrderItem[]{new OrderItem("P1", new Money(150L))});
+        assertThrows(AppException.class, () -> processor.process(order, payPal));
+    }
+
+    // Neg bad state
+    @Test
+    void testBadState() {
+        Order order = new Order("9", new OrderItem[0], OrderStatus.SHIPPED);
+        assertThrows(IllegalStateException.class, () -> order.transitionTo(OrderStatus.CANCELLED));
+    }
+
+    // Neg chain
+    @Test
+    void testChainException() {
+        processor = new DefaultOrderProcessor(i -> { throw new Exception("DB fail"); });
+        Order order = new Order("10", new OrderItem[]{new OrderItem("P1", new Money(10L))});
+        AppException ex = assertThrows(AppException.class, () -> processor.process(order, cardPay));
+        assertNotNull(ex.getCause());
+    }
 }
